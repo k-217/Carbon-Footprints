@@ -189,11 +189,29 @@ def search():
                                             database = 'carbon_footprints')
             cursor = cnx.cursor()
 
-            time = datetime.datetime(tuple(a2.get_date().split('/')))
+            date = a2.get_date().split('/') #list 'mm' 'dd' 'yy' ['12', '31', '23']
+            print(date)
+
+            time = a3.time() #tuple (12, 59, 'AM')
             print(time)
-            query = ('''delete from browsing_internet
-                    where time_of_measurement = %s''')
-            time_of_measurement = (time, )
+
+            datetime = ['YYYY', '-', 'MM', '-', 'DD', ' ', 'hh', ':', 'mm', ':', 'ss']
+
+            datetime[0] = date[2]
+            datetime[2] = date[0]
+            datetime[4] = date[1]
+
+            if time[2] == 'AM':
+                datetime[6] = str(time[0])
+                datetime[8] = str(time[1])
+            
+            elif time[2] == 'PM':
+                datetime[6] = str(12+ int(time[0]))
+                datetime[8] = str(time[1])
+
+            dt = ''.join(datetime)
+            
+            time_of_measurement = (dt, )
             cursor.execute(query, time_of_measurement)
             cnx.commit()
             cursor.close()
